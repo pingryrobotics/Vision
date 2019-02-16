@@ -12,16 +12,16 @@ class GripPipeline:
         """initializes all values to presets or None if need to be set
         """
 
-        self.__hsv_threshold_hue = [45.798561151079134, 54.9927935410585]
+        self.__hsv_threshold_hue = [45.798561151079134, 150.9927935410585]
         self.__hsv_threshold_saturation = [0.0, 16.884550084889632]
         self.__hsv_threshold_value = [0.0, 255.0]
 
         self.hsv_threshold_output = None
 
         self.__blur_input = self.hsv_threshold_output
-        self.__blur_type = BlurType.Median_Filter
+        self.__blur_type = BlurType.Box_Blur
         #self.__blur_type = BlurType.Gaussian_Blur
-        self.__blur_radius = 4.504504504504505
+        self.__blur_radius = 1
 
         self.blur_output = None
 
@@ -31,7 +31,7 @@ class GripPipeline:
         self.find_contours_output = None
 
         self.__filter_contours_contours = self.find_contours_output
-        self.__filter_contours_min_area = 200.0
+        self.__filter_contours_min_area = 50.0
         self.__filter_contours_min_perimeter = 10.0
         self.__filter_contours_min_width = 00.0
         self.__filter_contours_max_width = 1000.0
