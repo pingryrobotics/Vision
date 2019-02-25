@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import math
-import datetime
+import time
 import os
 import threading
 from networktables import NetworkTables
@@ -55,9 +55,20 @@ def twoLargest(contours):
 				if cv2.contourArea(c) >= cv2.contourArea(compare):
 					ret[ret.index(compare)] = c
 					break
+	"""
+	ret = []
+	if(len(contours) == 0):
+		return (None, None)
+	if(len(contours) == 1):
+		return (contours[0], None)
+	ret = contours[:1]
+	contours = contours[2:]
+	cntsSorted = sorted(contours, key=lambda x: cv2.contourArea(x))
+	for c in contours:
+		ret.append(c)
+		cntsSorted = sorted(contours, key=lambda x: cv2.contourArea(x))
+		ret = ret[1:]"""
 	return ret
-now = datetime.datetime.now()
-print("Vision Log for " + str(now.day) + "/" + str(now.month) + "/" + str(now.year) + "  ~    " + str(now.hour) + ":" + str(now.minute) +":" + str(now.second))
 print("OpenCV version: " + str(cv2.__version__))
 print("Starting Vision...")
 
@@ -87,8 +98,8 @@ sd = NetworkTables.getTable("SmartDashboard")"""
 #Angles in radians
 
 #image size ratioed to 16:9
-image_width = 256
-image_height = 144
+image_width = 320
+image_height = 240
 
 #Lifecam 3000 from datasheet
 #Datasheet: https://dl2jx7zfbtwvr.cloudfront.net/specsheets/WEBC1010.pdf
@@ -107,13 +118,15 @@ verticalView = math.atan(math.tan(diagonalView/2) * (verticalAspect / diagonalAs
 #Focal Length calculations: https://docs.google.com/presentation/d/1ediRsI-oR3-kwawFJZ34_ZTlQS2SDBLjZasjzZ-eXbQ/pub?start=false&loop=false&slide=id.g12c083cffa_0_165
 H_FOCAL_LENGTH = image_width / (2*math.tan((horizontalView/2)))
 V_FOCAL_LENGTH = image_height / (2*math.tan((verticalView/2)))
-CAMERA_HEIGHT = #inches
-VISION_TARGET_HEIGHT = #inches
+CAMERA_HEIGHT = 18#inches
+VISION_TARGET_HEIGHT = 22#inches
 
 # Insert your processing code here
 cap = cv2.VideoCapture(1)
-cap.set(3,256)
-cap.set(4,144)
+cap.set(3,image_width)
+cap.set(4,image_height)
+start = time.time()
+num_frames = 0
 while streamRunning:
 	# Capture frame-by-frame
 	ret, frame = cap.read()
@@ -134,8 +147,13 @@ while streamRunning:
 			lenContourPx = int(x1) + int(w1) - int(x2)
 		for c in largestTwoContours:
 			M = cv2.moments(c)
-			cX = int(M["m10"] / M["m00"]) 
-			cY = int(M["m01"] / M["m00"])
+			try:
+				cX = int(M["m10"] / M["m00"]) 
+				cY = int(M["m01"] / M["m00"])
+			except:
+				print("divby0")
+				cX = 0
+				cY = 0
 			cv2.circle(frame, (cX, cY), 7, (255, 0, 0), -1)
 			x,y,w,h= cv2.boundingRect(c)
 			cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),2)
@@ -157,8 +175,11 @@ while streamRunning:
 	cv2.imshow('frame',frame)
 	cv2.imshow('hsv',pipeline.hsv_threshold_output)
 	cv2.imshow('blur',pipeline.blur_output)
+	num_frames += 1
 	if cv2.waitKey(1) & 0xFF == ord('q'):
 		break
+end = time.time()
+print("fps: " + str(num_frames/(end - start)))
 cap.release()
 cv2.destroyAllWindows()
 print("Done!")
