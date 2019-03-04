@@ -27,8 +27,10 @@ def calculateDistance(heightOfCamera, heightOfTarget, pitch):
               camera -----
                        d
     '''
-    distance = math.fabs(heightOfTargetFromCamera / math.tan(math.radians(pitch)))
-
+    try:
+        distance = math.fabs(heightOfTargetFromCamera / math.tan(math.radians(pitch)))
+    except:
+        distance = None
     return distance
 # Uses trig and focal length of camera to find yaw.
 # Link to further explanation: https://docs.google.com/presentation/d/1ediRsI-oR3-kwawFJZ34_ZTlQS2SDBLjZasjzZ-eXbQ/pub?start=false&loop=false&slide=id.g12c083cffa_0_298
@@ -119,10 +121,13 @@ verticalView = math.atan(math.tan(diagonalView/2) * (verticalAspect / diagonalAs
 H_FOCAL_LENGTH = image_width / (2*math.tan((horizontalView/2)))
 V_FOCAL_LENGTH = image_height / (2*math.tan((verticalView/2)))
 CAMERA_HEIGHT = 18#inches
-VISION_TARGET_HEIGHT = 22#inches
+VISION_TARGET_HEIGHT = 24.573#inches
 
 # Insert your processing code here
-cap = cv2.VideoCapture(1)
+try:
+	cap = cv2.VideoCapture(0)
+except:
+	cap = cv2.VideoCapture(1)
 cap.set(3,image_width)
 cap.set(4,image_height)
 start = time.time()
