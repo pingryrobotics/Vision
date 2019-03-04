@@ -195,12 +195,12 @@ def main():
 		center[0] = int(center[0]/2)
 		center[1] = int(center[1]/2)
 		cv2.circle(img, (center[0], center[1]), 7, (0, 0, 255), -1)
-		#calculatedAngle = math.atan((distFromCenterPx)/h) - math.pi/4
 		calculatedAngle = calculateYaw(center[0],centerX,H_FOCAL_LENGTH)
-		print("angle: " + str(calculatedAngle))
+		#print("angle: " + str(calculatedAngle))
 		calculatedDistance = calculateDistance(CAMERA_HEIGHT,VISION_TARGET_HEIGHT,calculatePitch(center[0],centerY,V_FOCAL_LENGTH))
-		print("Distance: " + str(calculatedDistance) + " inches")
-        cs._publishTable.putNumber("angle", )
+		#print("Distance: " + str(calculatedDistance) + " inches")
+        cs._publishTable.putNumber("angle", calculatedAngle)
+        cs._publishTable.putNumber("distance", calculatedDistance)
         outputStream.putFrame(img)
         num_frames +=1
 	end = t.time()
