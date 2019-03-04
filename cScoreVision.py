@@ -170,37 +170,37 @@ def main():
        	pipeline.process(img)
 		contours = pipeline.filter_contours_output
 		cntsSorted = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)
-        largestTwoContours = cntsSorted[2:]
-        # (optional) send some image back to the dashboard
-        center = [0,0]
-		x1,y1,w1,h1 = cv2.boundingRect(largestTwoContours[0])
-		x2,y2,w2,h2 = cv2.boundingRect(largestTwoContours[1])
-		lenContourPx = int(x2) + int(w2) - int(x1)
-		if lenContourPx < 0:
-			lenContourPx = int(x1) + int(w1) - int(x2)
-		for c in largestTwoContours:
-			M = cv2.moments(c)
-			try:
-				cX = int(M["m10"] / M["m00"])
-				cY = int(M["m01"] / M["m00"])
-			except:
-				print("divby0")
-				cX = 0
-				cY = 0
-			cv2.circle(img, (cX, cY), 7, (255, 0, 0), -1)
-			x,y,w,h= cv2.boundingRect(c)
-			cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
-			center[0] += cX
-			center[1] += cY
-		center[0] = int(center[0]/2)
-		center[1] = int(center[1]/2)
-		cv2.circle(img, (center[0], center[1]), 7, (0, 0, 255), -1)
-		calculatedAngle = calculateYaw(center[0],centerX,H_FOCAL_LENGTH)
-		#print("angle: " + str(calculatedAngle))
-		calculatedDistance = calculateDistance(CAMERA_HEIGHT,VISION_TARGET_HEIGHT,calculatePitch(center[0],centerY,V_FOCAL_LENGTH))
-		#print("Distance: " + str(calculatedDistance) + " inches")
-        cs._publishTable.putNumber("angle", calculatedAngle)
-        cs._publishTable.putNumber("distance", calculatedDistance)
+        if len(cntsSorted) >= 2:
+            largestTwoContours = cntsSorted[2:]
+            center = [0,0]
+    		x1,y1,w1,h1 = cv2.boundingRect(largestTwoContours[0])
+    		x2,y2,w2,h2 = cv2.boundingRect(largestTwoContours[1])
+    		lenContourPx = int(x2) + int(w2) - int(x1)
+    		if lenContourPx < 0:
+    			lenContourPx = int(x1) + int(w1) - int(x2)
+    		for c in largestTwoContours:
+    			M = cv2.moments(c)
+    			try:
+    				cX = int(M["m10"] / M["m00"])
+    				cY = int(M["m01"] / M["m00"])
+    			except:
+    				print("divby0")
+    				cX = 0
+    				cY = 0
+    			cv2.circle(img, (cX, cY), 7, (255, 0, 0), -1)
+    			x,y,w,h= cv2.boundingRect(c)
+    			cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
+    			center[0] += cX
+    			center[1] += cY
+    		center[0] = int(center[0]/2)
+    		center[1] = int(center[1]/2)
+    		cv2.circle(img, (center[0], center[1]), 7, (0, 0, 255), -1)
+    		calculatedAngle = calculateYaw(center[0],centerX,H_FOCAL_LENGTH)
+    		#print("angle: " + str(calculatedAngle))
+    		calculatedDistance = calculateDistance(CAMERA_HEIGHT,VISION_TARGET_HEIGHT,calculatePitch(center[0],centerY,V_FOCAL_LENGTH))
+    		#print("Distance: " + str(calculatedDistance) + " inches")
+            cs._publishTable.putNumber("angle", calculatedAngle)
+            cs._publishTable.putNumber("distance", calculatedDistance)
         outputStream.putFrame(img)
         num_frames +=1
 	end = t.time()
