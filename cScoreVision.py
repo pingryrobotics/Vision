@@ -1,6 +1,6 @@
 import networktables
-from networktables import NetworkTables
-from cscore import CameraServer
+from networktables import NetworkTables, NetworkTablesInstance
+from cscore import CameraServer, VideoSource
 import cv2
 import numpy as np
 import math
@@ -8,10 +8,48 @@ import time as t
 import os
 import threading
 from grip import GripPipeline
+def calculateDistance(heightOfCamera, heightOfTarget, pitch):
+    heightOfTargetFromCamera = heightOfTarget - heightOfCamera
 
+    # Uses trig and pitch to find distance to target
+    '''
+    d = distance
+    h = height between camera and target
+    a = angle = pitch
+
+    tan a = h/d (opposite over adjacent)
+
+    d = h / tan a
+
+                         .
+                        /|
+                       / |
+                      /  |h
+                     /a  |
+              camera -----
+                       d
+    '''
+    distance = math.fabs(heightOfTargetFromCamera / math.tan(math.radians(pitch)))
+
+    return distance
+# Uses trig and focal length of camera to find yaw.
+# Link to further explanation: https://docs.google.com/presentation/d/1ediRsI-oR3-kwawFJZ34_ZTlQS2SDBLjZasjzZ-eXbQ/pub?start=false&loop=false&slide=id.g12c083cffa_0_298
+def calculateYaw(pixelX, centerX, hFocalLength):
+    yaw = math.degrees(math.atan((pixelX - centerX) / hFocalLength))
+    return yaw
+
+
+# Link to further explanation: https://docs.google.com/presentation/d/1ediRsI-oR3-kwawFJZ34_ZTlQS2SDBLjZasjzZ-eXbQ/pub?start=false&loop=false&slide=id.g12c083cffa_0_298
+def calculatePitch(pixelY, centerY, vFocalLength):
+    pitch = math.degrees(math.atan((pixelY - centerY) / vFocalLength))
+    # Just stopped working have to do this:
+    pitch *= -1
+    return round(pitch)
 def main():
-	#start network tables stuff, cscore __main__ handles most of initialization
-	networktables.startClientTeam(2577)
+	# start NetworkTables
+    ntinst = NetworkTablesInstance.getDefault()
+    #Name of network table - this is how it communicates with robot. IMPORTANT
+    networkTable = NetworkTables.getTable('ChickenVision')
 
 	#Setting up CS stuff
 	cs = CameraServer.getInstance()
@@ -56,7 +94,7 @@ def main():
 	H_FOCAL_LENGTH = image_width / (2*math.tan((horizontalView/2)))
 	V_FOCAL_LENGTH = image_height / (2*math.tan((verticalView/2)))
 	CAMERA_HEIGHT = 18#inches
-	VISION_TARGET_HEIGHT = 22#fix, correct values on tx1
+	VISION_TARGET_HEIGHT = 24.573#fix, correct values on tx1
 
 	start = t.time()
 	num_frames = 0
@@ -73,7 +111,8 @@ def main():
             # skip the rest of the current iteration
             continue
        	pipeline.process(img)
-
+		contours = pipeline.filter_contours_output
+		cntsSorted = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)
 
         # (optional) send some image back to the dashboard
         cs._publishTable.putNumber("angle", 4)

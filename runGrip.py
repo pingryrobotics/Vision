@@ -148,7 +148,7 @@ while streamRunning:
 		for c in largestTwoContours:
 			M = cv2.moments(c)
 			try:
-				cX = int(M["m10"] / M["m00"]) 
+				cX = int(M["m10"] / M["m00"])
 				cY = int(M["m01"] / M["m00"])
 			except:
 				print("divby0")
