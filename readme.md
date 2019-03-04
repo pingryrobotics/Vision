@@ -6,4 +6,3 @@ todo:
 	https://robotpy.readthedocs.io/en/stable/vision/index.html
 	https://robotpy.readthedocs.io/projects/cscore/en/stable/_modules/cscore/cameraserver.html
 2. get needed values consistent
-3. Add/start testing cargo tracking?? low priority
