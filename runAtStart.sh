@@ -1,1 +1,3 @@
-python3 -m cscore --team 2577 cScoreVision.py:main
+v4l2-ctl --set-ctrl=exposure_auto=1
+v4l2-ctl --set-ctrl=exposure_absolute=10
+python3 /home/ubuntu/Desktop/Vision/runGrip.py
