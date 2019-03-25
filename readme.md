@@ -1,8 +1,10 @@
-todo:
-1. cscore to add streaming to dashboard && NT configuration
-	python3 -m cscore --team 2577 cScoreVision.py:main
-	https://robotpy.readthedocs.io/projects/pynetworktables/en/latest/api.html
-	https://robotpy.readthedocs.io/en/stable/vision/code.html#vision-code
-	https://robotpy.readthedocs.io/en/stable/vision/index.html
-	https://robotpy.readthedocs.io/projects/cscore/en/stable/_modules/cscore/cameraserver.html
-2. get needed values consistent
+# Team 2577's Vision Coprocessor code
+## Basic info
+- Author: Micah Elwyn
+- For Command-Based Java Robot code, see [our robot code repository](https://github.com/pingryrobotics/2019JavaFRC "our robot code")
+- Code written in python, based on OpenCV, GRIP, pynetworktables, and cscore
+- Coprocessor of choice: Jetson TX1
+## TODO:
+- [x] Write test code for linefollowing
+- [] Write code to grab an image from Limelight and use cv2.solveP2P to find target positions
+- [] test camera distortion & all code
