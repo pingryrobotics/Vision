@@ -6,5 +6,5 @@
 - Coprocessor of choice: Jetson TX1
 ## TODO:
 - [x] Write test code for linefollowing
-- [] Write code to grab an image from Limelight and use cv2.solveP2P to find target positions
-- [] test camera distortion & all code
+- [ ] Write code to grab an image from Limelight and use cv2.solveP2P to find target positions
+- [ ] test camera distortion & all code
