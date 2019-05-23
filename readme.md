@@ -4,7 +4,5 @@
 - For Command-Based Java Robot code, see [our robot code repository](https://github.com/pingryrobotics/2019JavaFRC "our robot code")
 - Code written in python, based on OpenCV, GRIP, pynetworktables, and cscore
 - Coprocessor of choice: Jetson TX1
-## TODO:
-- [x] Write test code for linefollowing
-- [ ] Write code to grab an image from Limelight and use cv2.solveP2P to find target positions
-- [ ] test camera distortion & all code
+## NOTE:
+This code is not functional, and was abandoned in favor of a limelight
