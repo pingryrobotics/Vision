@@ -1,5 +1,5 @@
 import networktables
-from ftplib import FTP
+from ftplib import FTP 
 from networktables import NetworkTables, NetworkTablesInstance
 import pathfinder as pf
 import cscore
